@@ -80,7 +80,7 @@ def generate_chat_responses(chat_completion) -> Generator[str, None, None]:
 if prompt := st.chat_input("Entrez votre message ici..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
 
-    with st.chat_message("user", avatar='👨‍💻'):
+    with st.chat_message("user", avatar='👤'):
         st.markdown(prompt)
 
     # Obtenir la réponse de l'API Groq
@@ -99,7 +99,7 @@ if prompt := st.chat_input("Entrez votre message ici..."):
         )
 
         # Utiliser la fonction génératrice avec st.write_stream
-        with st.chat_message("assistant", avatar="🤖"):
+        with st.chat_message("assistant", avatar="👽"):
             chat_responses_generator = generate_chat_responses(chat_completion)
             full_response = st.write_stream(chat_responses_generator)
     except Exception as e:
