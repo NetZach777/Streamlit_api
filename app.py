@@ -14,7 +14,7 @@ def icon(emoji: str):
 
 icon("🐉")
 
-st.subheader("Beta test Kingdom_IA", divider="rainbow", anchor=False)
+st.subheader("Beta test Kingdom_IA")
 
 # Utilisation de la clé API à partir des variables d'environnement
 GROQ_API_KEY = os.getenv('GROQ_API_KEY')
@@ -29,11 +29,17 @@ if "selected_model" not in st.session_state:
 
 # Définir les détails des modèles
 models = {
-    "gemma-7b-it": {"name": "Gemma-7b-it", "tokens": 8192, "developer": "Google"},
-    "llama2-70b-4096": {"name": "LLaMA2-70b-chat", "tokens": 4096, "developer": "Meta"},
-    "llama3-70b-8192": {"name": "LLaMA3-70b-8192", "tokens": 8192, "developer": "Meta"},
-    "llama3-8b-8192": {"name": "LLaMA3-8b-8192", "tokens": 8192, "developer": "Meta"},
-    "mixtral-8x7b-32768": {"name": "Mixtral-8x7b-Instruct-v0.1", "tokens": 32768, "developer": "Mistral"},
+    "llama-3.1-405b-reasoning": {"name": "Llama 3.1 405B", "tokens": 16000, "developer": "Meta"},
+    "llama-3.1-70b-versatile": {"name": "Llama 3.1 70B", "tokens": 8000, "developer": "Meta"},
+    "llama-3.1-8b-instant": {"name": "Llama 3.1 8B", "tokens": 8000, "developer": "Meta"},
+    "llama3-groq-70b-8192-tool-use-preview": {"name": "Llama 3 Groq 70B Tool Use", "tokens": 8192, "developer": "Groq"},
+    "llama3-groq-8b-8192-tool-use-preview": {"name": "Llama 3 Groq 8B Tool Use", "tokens": 8192, "developer": "Groq"},
+    "llama3-70b-8192": {"name": "Meta Llama 3 70B", "tokens": 8192, "developer": "Meta"},
+    "llama3-8b-8192": {"name": "Meta Llama 3 8B", "tokens": 8192, "developer": "Meta"},
+    "mixtral-8x7b-32768": {"name": "Mixtral 8x7B", "tokens": 32768, "developer": "Mistral"},
+    "gemma-7b-it": {"name": "Gemma 7B", "tokens": 8192, "developer": "Google"},
+    "gemma2-9b-it": {"name": "Gemma 2 9B", "tokens": 8192, "developer": "Google"},
+    "whisper-large-v3": {"name": "Whisper Large V3", "tokens": 8000, "developer": "OpenAI"},
 }
 
 # Disposition pour la sélection du modèle et le curseur max_tokens
@@ -44,7 +50,7 @@ with col1:
         "Choisissez un modèle :",
         options=list(models.keys()),
         format_func=lambda x: models[x]["name"],
-        index=4  # Défaut à mixtral
+        index=0  # Défaut à Llama 3.1 405B
     )
 
 # Détecter le changement de modèle et vider l'historique des messages si le modèle a changé
@@ -60,7 +66,7 @@ with col2:
         "Max Tokens :",
         min_value=512,  # Valeur minimum pour permettre une certaine flexibilité
         max_value=max_tokens_range,
-        value=min(32768, max_tokens_range),  # Valeur par défaut ou maximum autorisé si moins
+        value=min(8000, max_tokens_range),  # Valeur par défaut ou maximum autorisé si moins
         step=512,
         help=f"Ajustez le nombre maximum de tokens (mots) pour la réponse du modèle. Max pour le modèle sélectionné : {max_tokens_range}"
     )
@@ -77,6 +83,7 @@ def generate_chat_responses(chat_completion) -> Generator[str, None, None]:
         if chunk.choices[0].delta.content:
             yield chunk.choices[0].delta.content
 
+# Gestion des entrées utilisateur et génération de réponses
 if prompt := st.chat_input("Entrez votre message ici..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
 
@@ -103,7 +110,7 @@ if prompt := st.chat_input("Entrez votre message ici..."):
             chat_responses_generator = generate_chat_responses(chat_completion)
             full_response = st.write_stream(chat_responses_generator)
     except Exception as e:
-        st.error(e, icon="🚨")
+        st.error(f"Une erreur s'est produite : {e}", icon="🚨")
 
     # Ajouter la réponse complète à l'historique des messages
     if isinstance(full_response, str):
