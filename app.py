@@ -34,7 +34,7 @@ else:
 
     # Définir les détails des modèles avec les données fournies
     models = {
-        "distil-whisper-large-v3-en": {"name": "Distil-Whisper English(en cours de mise en place)", "tokens": 25000, "developer": "HuggingFace"},
+        #"distil-whisper-large-v3-en": {"name": "Distil-Whisper English(en cours de mise en place)", "tokens": 25000, "developer": "HuggingFace"},
         "gemma2-9b-it": {"name": "Gemma 2 9B", "tokens": 8192, "developer": "Google"},
         "gemma-7b-it": {"name": "Gemma 7B", "tokens": 8192, "developer": "Google"},
         "llama3-groq-70b-8192-tool-use-preview": {"name": "Llama 3 Groq 70B Tool Use", "tokens": 8192, "developer": "Groq"},
@@ -46,7 +46,7 @@ else:
         "llama3-70b-8192": {"name": "Meta Llama 3 70B", "tokens": 8192, "developer": "Meta"},
         "llama3-8b-8192": {"name": "Meta Llama 3 8B", "tokens": 8192, "developer": "Meta"},
         "mixtral-8x7b-32768": {"name": "Mixtral 8x7B", "tokens": 32768, "developer": "Mistral"},
-        "whisper-large-v3": {"name": "Whisper Large V3", "tokens": 25000, "developer": "OpenAI"},
+        #"whisper-large-v3": {"name": "Whisper Large V3", "tokens": 25000, "developer": "OpenAI"},
     }
 
     # Disposition pour la sélection du modèle et le curseur max_tokens
