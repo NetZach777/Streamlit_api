@@ -34,7 +34,7 @@ else:
 
     # Définir les détails des modèles avec les données fournies
     models = {
-        "distil-whisper-large-v3": {"name": "Distil-Whisper English", "tokens": 25000, "developer": "HuggingFace"},
+        "distil-whisper-large-v3-en": {"name": "Distil-Whisper English", "tokens": 25000, "developer": "HuggingFace"},
         "gemma2-9b-it": {"name": "Gemma 2 9B", "tokens": 8192, "developer": "Google"},
         "gemma-7b-it": {"name": "Gemma 7B", "tokens": 8192, "developer": "Google"},
         "llama3-groq-70b-8192-tool-use-preview": {"name": "Llama 3 Groq 70B Tool Use", "tokens": 8192, "developer": "Groq"},
