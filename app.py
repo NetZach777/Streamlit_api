@@ -93,21 +93,15 @@ else:
         with st.chat_message(message["role"], avatar=avatar):
             st.markdown(message["content"])
 
-    #def generate_chat_responses(chat_completion) -> Generator[str, None, None]:
-    #    """Génère le contenu de la réponse du chat à partir de la réponse de l'API Groq."""
-    #    for chunk in chat_completion:
-     #       if chunk.choices[0].delta.content:
-      #          yield chunk.choices[0].delta.content
-                
     def generate_chat_responses(chat_completion) -> Generator[str, None, None]:
         """Génère le contenu de la réponse du chat à partir de la réponse de l'API Groq."""
         full_content = ""
         for chunk in chat_completion:
             if chunk.choices[0].delta.content:
-            # Concatène directement les parties du texte pour éviter les espaces
-            full_content += chunk.choices[0].delta.content
+                # Concatène directement les parties du texte pour éviter les espaces
+                full_content += chunk.choices[0].delta.content
         yield full_content
-    
+
     # Gestion des entrées utilisateur et génération de réponses
     if prompt := st.chat_input("Entrez votre message ici..."):
         st.session_state.messages.append({"role": "user", "content": prompt})
