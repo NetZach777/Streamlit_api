@@ -5,6 +5,7 @@ from groq import Groq
 from PIL import Image
 import time
 
+# Configuration de l'application Streamlit
 st.set_page_config(page_icon="💬", layout="wide", page_title="Nessem_Projet")
 
 def icon(emoji: str):
@@ -14,10 +15,12 @@ def icon(emoji: str):
         unsafe_allow_html=True,
     )
 
+# Affichage de l'emoji sur la page
 icon("🐉")
 
 st.subheader("Beta test Kingdom_IA")
 
+# Clé API Groq
 GROQ_API_KEY = os.getenv('GROQ_API_KEY')
 
 if GROQ_API_KEY is None:
@@ -30,7 +33,7 @@ else:
     if "selected_model" not in st.session_state:
         st.session_state.selected_model = None
     
- # Définir les détails des modèles avec les données fournies
+    # Définition des modèles disponibles
     models = {
     # Modèles de traitement du langage naturel (NLP)
     "gemma2-9b-it": {"name": "Gemma 2 9B", "tokens": 8192, "developer": "Google", "type": "chat"},
@@ -59,6 +62,7 @@ else:
     col1, col2 = st.columns(2)
 
     with col1:
+        # Sélection du modèle
         model_option = st.selectbox(
             "Choisissez un modèle :",
             options=list(models.keys()),
@@ -73,6 +77,7 @@ else:
     max_tokens_range = models[model_option]["tokens"]
 
     with col2:
+        # Sélection du nombre maximum de tokens
         max_tokens = st.slider(
             "Max Tokens :",
             min_value=512,
@@ -85,6 +90,7 @@ else:
     st.write(f"Développeur : {models[model_option]['developer']}")
     st.write(f"Nombre maximal de tokens : {models[model_option]['tokens']}")
 
+    # Gestion des images pour les modèles de vision
     if models[model_option]["type"] == "vision":
         uploaded_image = st.file_uploader("Upload une image", type=["png", "jpg", "jpeg"])
     else:
