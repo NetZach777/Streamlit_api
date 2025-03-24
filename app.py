@@ -88,78 +88,69 @@ else:
     st.write(f"Développeur : {models[model_option]['developer']}")
     st.write(f"Nombre maximal de tokens : {models[model_option]['tokens']}")
 
-    # Gestion des images pour les modèles de vision
-    uploaded_image = None
-    if models[model_option]["type"] == "vision":
-        uploaded_image = st.file_uploader("Upload une image", type=["png", "jpg", "jpeg"])
+# Gestion des images pour les modèles de vision
+uploaded_image = None
+if models[model_option]["type"] == "vision":
+    uploaded_image = st.file_uploader("Téléchargez une image", type=["png", "jpg", "jpeg"])
 
-    # Gestion de l'audio pour les modèles de reconnaissance vocale
-    uploaded_audio = None
-    if models[model_option]["type"] == "audio":
-        uploaded_audio = st.file_uploader("Téléchargez un fichier audio", type=["mp3", "wav"])
+# Gestion de l'audio pour les modèles de reconnaissance vocale
+uploaded_audio = None
+if models[model_option]["type"] == "audio":
+    uploaded_audio = st.file_uploader("Téléchargez un fichier audio", type=["mp3", "wav"])
 
-    if st.button("Effacer l'historique"):
-        st.session_state.messages = []
+# Affichage de la confirmation et du traitement des fichiers téléchargés
+if uploaded_image:
+    st.success("Image téléchargée avec succès!")
+    image = Image.open(uploaded_image)
+    st.image(image, caption="Image téléchargée", use_column_width=True)
 
-    for message in st.session_state.messages:
-        avatar = '🐉' if message["role"] == "assistant" else '👤'
-        with st.chat_message(message["role"], avatar=avatar):
-            st.markdown(message["content"])
+if uploaded_audio:
+    st.success("Audio téléchargé avec succès!")
+    audio_bytes = uploaded_audio.read()
+    st.audio(audio_bytes, format="audio/wav")
 
-    def generate_chat_responses(chat_completion):
-        full_content = ""
-        for chunk in chat_completion:
-            if chunk.choices[0].delta.content:
-                full_content += chunk.choices[0].delta.content
-                yield chunk.choices[0].delta.content
-        yield full_content
+# Code pour le reste du processus de chat
+if prompt := st.chat_input("Entrez votre message ici...") or uploaded_image or uploaded_audio:
+    # Si une image est téléchargée
+    if uploaded_image:
+        prompt = "Analyse cette image."
 
-    # Traitement des entrées utilisateur
-    if prompt := st.chat_input("Entrez votre message ici...") or uploaded_image or uploaded_audio:
-        # Si une image est téléchargée
-        if uploaded_image:
-            image = Image.open(uploaded_image)
-            st.image(image, caption="Image téléchargée", use_column_width=True)
-            prompt = "Analyse cette image."
+    # Si un fichier audio est téléchargé
+    if uploaded_audio:
+        prompt = "Transcrire cet audio."
 
-        # Si un fichier audio est téléchargé
-        if uploaded_audio:
-            audio_bytes = uploaded_audio.read()
-            st.audio(audio_bytes, format="audio/wav")
-            prompt = "Transcrire cette audio."
+    st.session_state.messages.append({"role": "user", "content": prompt})
 
-        st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user", avatar='👤'):
+        st.markdown(prompt)
 
-        with st.chat_message("user", avatar='👤'):
-            st.markdown(prompt)
+    try:
+        with st.spinner('Génération de la réponse...'):
+            # Appel API pour obtenir la réponse
+            chat_completion = client.chat.completions.create(
+                model=model_option,
+                messages=[
+                    {"role": m["role"], "content": m["content"]} 
+                    for m in st.session_state.messages
+                ],
+                max_tokens=max_tokens,
+                stream=True
+            )
+            
+            full_response = ""
+            with st.chat_message("assistant", avatar="👽"):
+                for chunk in generate_chat_responses(chat_completion):
+                    full_response += chunk
+                    st.markdown(chunk)
+                    time.sleep(0.05)
 
-        try:
-            with st.spinner('Génération de la réponse...'):
-                # Appel API pour obtenir la réponse
-                chat_completion = client.chat.completions.create(
-                    model=model_option,
-                    messages=[
-                        {"role": m["role"], "content": m["content"]} 
-                        for m in st.session_state.messages
-                    ],
-                    max_tokens=max_tokens,
-                    stream=True
-                )
-                
-                full_response = ""
-                with st.chat_message("assistant", avatar="👽"):
-                    for chunk in generate_chat_responses(chat_completion):
-                        full_response += chunk
-                        st.markdown(chunk)
-                        time.sleep(0.05)
+            st.session_state.messages.append(
+                {"role": "assistant", "content": full_response}
+            )
 
-                st.session_state.messages.append(
-                    {"role": "assistant", "content": full_response}
-                )
-
-        except client.AuthenticationError:
-            st.error("Erreur d'authentification. Vérifiez votre clé API.", icon="🚨")
-        except client.APIError as api_err:
-            st.error(f"Erreur API : {api_err}", icon="🚨")
-        except Exception as e:
-            st.error(f"Une erreur s'est produite : {e}", icon="🚨")
+    except client.AuthenticationError:
+        st.error("Erreur d'authentification. Vérifiez votre clé API.", icon="🚨")
+    except client.APIError as api_err:
+        st.error(f"Erreur API : {api_err}", icon="🚨")
+    except Exception as e:
+        st.error(f"Une erreur s'est produite : {e}", icon="🚨")
