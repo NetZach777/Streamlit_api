@@ -1,6 +1,5 @@
 import os
 import streamlit as st
-from typing import Generator
 from groq import Groq
 from PIL import Image
 import time
@@ -34,7 +33,7 @@ else:
         st.session_state.selected_model = None
     
     # Définition des modèles disponibles
-    models = {
+    mmodels = {
     # Modèles de traitement du langage naturel (NLP)
     "gemma2-9b-it": {"name": "Gemma 2 9B", "tokens": 8192, "developer": "Google", "type": "chat"},
     "meta-llama-3.3-70b-versatile": {"name": "Llama 3.3 70B Versatile", "tokens": 32768, "developer": "Meta", "type": "chat"},
@@ -58,6 +57,7 @@ else:
     "openai-whisper-large-v3": {"name": "Whisper Large V3", "tokens": 25000, "developer": "OpenAI", "type": "audio"},
     "openai-whisper-large-v3-turbo": {"name": "Whisper Large V3 Turbo", "tokens": 25000, "developer": "OpenAI", "type": "audio"}
 }
+
     
     col1, col2 = st.columns(2)
 
@@ -91,10 +91,14 @@ else:
     st.write(f"Nombre maximal de tokens : {models[model_option]['tokens']}")
 
     # Gestion des images pour les modèles de vision
+    uploaded_image = None
     if models[model_option]["type"] == "vision":
         uploaded_image = st.file_uploader("Upload une image", type=["png", "jpg", "jpeg"])
-    else:
-        uploaded_image = None
+
+    # Gestion de l'audio pour les modèles de reconnaissance vocale
+    uploaded_audio = None
+    if models[model_option]["type"] == "audio":
+        uploaded_audio = st.file_uploader("Téléchargez un fichier audio", type=["mp3", "wav"])
 
     if st.button("Effacer l'historique"):
         st.session_state.messages = []
@@ -104,7 +108,7 @@ else:
         with st.chat_message(message["role"], avatar=avatar):
             st.markdown(message["content"])
 
-    def generate_chat_responses(chat_completion) -> Generator[str, None, None]:
+    def generate_chat_responses(chat_completion):
         full_content = ""
         for chunk in chat_completion:
             if chunk.choices[0].delta.content:
@@ -112,11 +116,19 @@ else:
                 yield chunk.choices[0].delta.content
         yield full_content
 
-    if prompt := st.chat_input("Entrez votre message ici...") or uploaded_image:
+    # Traitement des entrées utilisateur
+    if prompt := st.chat_input("Entrez votre message ici...") or uploaded_image or uploaded_audio:
+        # Si une image est téléchargée
         if uploaded_image:
             image = Image.open(uploaded_image)
             st.image(image, caption="Image téléchargée", use_column_width=True)
             prompt = "Analyse cette image."
+
+        # Si un fichier audio est téléchargé
+        if uploaded_audio:
+            audio_bytes = uploaded_audio.read()
+            st.audio(audio_bytes, format="audio/wav")
+            prompt = "Transcrire cette audio."
 
         st.session_state.messages.append({"role": "user", "content": prompt})
 
@@ -125,6 +137,7 @@ else:
 
         try:
             with st.spinner('Génération de la réponse...'):
+                # Appel API pour obtenir la réponse
                 chat_completion = client.chat.completions.create(
                     model=model_option,
                     messages=[
