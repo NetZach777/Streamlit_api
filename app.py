@@ -33,32 +33,30 @@ else:
         st.session_state.selected_model = None
     
     # Définition des modèles disponibles
-    mmodels = {
-    # Modèles de traitement du langage naturel (NLP)
-    "gemma2-9b-it": {"name": "Gemma 2 9B", "tokens": 8192, "developer": "Google", "type": "chat"},
-    "meta-llama-3.3-70b-versatile": {"name": "Llama 3.3 70B Versatile", "tokens": 32768, "developer": "Meta", "type": "chat"},
-    "meta-llama-3.1-8b-instant": {"name": "Llama 3.1 8B Instant", "tokens": 8192, "developer": "Meta", "type": "chat"},
-    "meta-llama-guard-3-8b": {"name": "Llama Guard 3 8B", "tokens": 8192, "developer": "Meta", "type": "chat"},
-    "meta-llama-3-70b": {"name": "Meta Llama 3 70B", "tokens": 8192, "developer": "Meta", "type": "chat"},
-    "meta-llama-3-8b": {"name": "Meta Llama 3 8B", "tokens": 8192, "developer": "Meta", "type": "chat"},
-    "mistral-8x7b": {"name": "Mixtral 8x7B", "tokens": 32768, "developer": "Mistral", "type": "chat"},
-    "qwen-qwq-32b": {"name": "Qwen-QWQ 32B", "tokens": 128000, "developer": "Alibaba Cloud", "type": "chat"},
-    "mistral-saba-24b": {"name": "Mistral Saba 24B", "tokens": 32000, "developer": "Mistral", "type": "chat"},
-    "qwen-2.5-coder-32b": {"name": "Qwen 2.5 Coder 32B", "tokens": 128000, "developer": "Alibaba Cloud", "type": "chat"},
-    "qwen-2.5-32b": {"name": "Qwen 2.5 32B", "tokens": 128000, "developer": "Alibaba Cloud", "type": "chat"},
-    "deepseek-r1-distill-qwen-32b": {"name": "DeepSeek Distill Qwen 32B", "tokens": 16384, "developer": "DeepSeek", "type": "chat"},
-    "deepseek-r1-distill-llama-70b": {"name": "DeepSeek Distill Llama 70B", "tokens": 128000, "developer": "DeepSeek", "type": "chat"},
-    
-    # Modèles de vision
-    "meta-llama-3.2-11b-vision-preview": {"name": "Llama 3.2 11B Vision Preview", "tokens": 8192, "developer": "Meta", "type": "vision"},
-    "meta-llama-3.2-90b-vision-preview": {"name": "Llama 3.2 90B Vision Preview", "tokens": 8192, "developer": "Meta", "type": "vision"},
-    
-    # Modèles de reconnaissance vocale
-    "openai-whisper-large-v3": {"name": "Whisper Large V3", "tokens": 25000, "developer": "OpenAI", "type": "audio"},
-    "openai-whisper-large-v3-turbo": {"name": "Whisper Large V3 Turbo", "tokens": 25000, "developer": "OpenAI", "type": "audio"}
-}
+    models = {
+        "gemma2-9b-it": {"name": "Gemma 2 9B", "tokens": 8192, "developer": "Google", "type": "chat"},
+        "meta-llama-3.3-70b-versatile": {"name": "Llama 3.3 70B Versatile", "tokens": 32768, "developer": "Meta", "type": "chat"},
+        "meta-llama-3.1-8b-instant": {"name": "Llama 3.1 8B Instant", "tokens": 8192, "developer": "Meta", "type": "chat"},
+        "meta-llama-guard-3-8b": {"name": "Llama Guard 3 8B", "tokens": 8192, "developer": "Meta", "type": "chat"},
+        "meta-llama-3-70b": {"name": "Meta Llama 3 70B", "tokens": 8192, "developer": "Meta", "type": "chat"},
+        "meta-llama-3-8b": {"name": "Meta Llama 3 8B", "tokens": 8192, "developer": "Meta", "type": "chat"},
+        "mistral-8x7b": {"name": "Mixtral 8x7B", "tokens": 32768, "developer": "Mistral", "type": "chat"},
+        "qwen-qwq-32b": {"name": "Qwen-QWQ 32B", "tokens": 128000, "developer": "Alibaba Cloud", "type": "chat"},
+        "mistral-saba-24b": {"name": "Mistral Saba 24B", "tokens": 32000, "developer": "Mistral", "type": "chat"},
+        "qwen-2.5-coder-32b": {"name": "Qwen 2.5 Coder 32B", "tokens": 128000, "developer": "Alibaba Cloud", "type": "chat"},
+        "qwen-2.5-32b": {"name": "Qwen 2.5 32B", "tokens": 128000, "developer": "Alibaba Cloud", "type": "chat"},
+        "deepseek-r1-distill-qwen-32b": {"name": "DeepSeek Distill Qwen 32B", "tokens": 16384, "developer": "DeepSeek", "type": "chat"},
+        "deepseek-r1-distill-llama-70b": {"name": "DeepSeek Distill Llama 70B", "tokens": 128000, "developer": "DeepSeek", "type": "chat"},
+        
+        # Modèles de vision
+        "meta-llama-3.2-11b-vision-preview": {"name": "Llama 3.2 11B Vision Preview", "tokens": 8192, "developer": "Meta", "type": "vision"},
+        "meta-llama-3.2-90b-vision-preview": {"name": "Llama 3.2 90B Vision Preview", "tokens": 8192, "developer": "Meta", "type": "vision"},
+        
+        # Modèles de reconnaissance vocale
+        "openai-whisper-large-v3": {"name": "Whisper Large V3", "tokens": 25000, "developer": "OpenAI", "type": "audio"},
+        "openai-whisper-large-v3-turbo": {"name": "Whisper Large V3 Turbo", "tokens": 25000, "developer": "OpenAI", "type": "audio"}
+    }
 
-    
     col1, col2 = st.columns(2)
 
     with col1:
