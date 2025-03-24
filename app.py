@@ -109,6 +109,11 @@ if uploaded_audio:
     audio_bytes = uploaded_audio.read()
     st.audio(audio_bytes, format="audio/wav")
 
+# Fonction pour générer les réponses du chat en streaming
+def generate_chat_responses(chat_completion):
+    for chunk in chat_completion['choices']:
+        yield chunk['message']['content']
+
 # Code pour le reste du processus de chat
 if prompt := st.chat_input("Entrez votre message ici...") or uploaded_image or uploaded_audio:
     # Si une image est téléchargée
